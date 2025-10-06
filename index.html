@@ -2,14 +2,28 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Connect MetaMask - Base Network</title>
+    <title>Mint NFT on Base</title>
   </head>
   <body>
-    <h2>اتصال به متامسک (شبکه Base)</h2>
+    <h2>اتصال به متامسک و Mint NFT</h2>
     <button id="connectButton">اتصال به متامسک</button>
+    <button id="mintButton" disabled>Mint NFT</button>
 
     <script>
       const connectButton = document.getElementById('connectButton');
+      const mintButton = document.getElementById('mintButton');
+
+      let userAccount;
+      const contractAddress = "0xdc3376de665d14d19430cfb060f53fd7fe9d0654"; // ← آدرس کانترکت NFT خودت
+      const contractABI = [
+        {
+          "inputs": [],
+          "name": "mint",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
 
       async function connectWallet() {
         if (typeof window.ethereum === 'undefined') {
@@ -18,29 +32,37 @@
         }
 
         try {
-          // درخواست اتصال به حساب
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const account = accounts[0];
-          alert("اتصال موفق! آدرس شما:\n" + account);
-
-          // بررسی شبکه Base
-          const baseChainId = '0x2105'; // Chain ID برای Base Mainnet
-          const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-
-          if (currentChainId !== baseChainId) {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: baseChainId }],
-            });
-            alert("به شبکه Base متصل شدی ✅");
-          }
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          userAccount = accounts[0];
+          alert("اتصال موفق! آدرس شما:\n" + userAccount);
+          mintButton.disabled = false; // دکمه Mint فعال میشه
         } catch (err) {
           console.error(err);
           alert("خطا در اتصال: " + err.message);
         }
       }
 
+      async function mintNFT() {
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+          const tx = await contract.mint();
+          alert("در حال ارسال تراکنش... لطفاً در MetaMask تأیید کنید.");
+          await tx.wait();
+          alert("✅ NFT با موفقیت Mint شد!");
+        } catch (err) {
+          console.error(err);
+          alert("❌ خطا در Mint: " + err.message);
+        }
+      }
+
       connectButton.addEventListener('click', connectWallet);
+      mintButton.addEventListener('click', mintNFT);
     </script>
+
+    <!-- بارگذاری کتابخانه ethers.js برای ارتباط با کانترکت -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
   </body>
 </html>
