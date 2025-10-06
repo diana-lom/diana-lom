@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>Mint NFT on Base</title>
+    <!-- ابتدا ethers.js را بارگذاری کن -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   </head>
   <body>
     <h2>اتصال به متامسک و Mint NFT</h2>
@@ -14,7 +16,7 @@
       const mintButton = document.getElementById('mintButton');
 
       let userAccount;
-      const contractAddress = "0xdc3376de665d14d19430cfb060f53fd7fe9d0654"; // ← آدرس کانترکت NFT خودت
+      const contractAddress = "0xdc3376de665d14d19430cfb060f53fd7fe9d0654"; // ← آدرس کانترکت NFT تو
       const contractABI = [
         {
           "inputs": [],
@@ -35,7 +37,7 @@
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           userAccount = accounts[0];
           alert("اتصال موفق! آدرس شما:\n" + userAccount);
-          mintButton.disabled = false; // دکمه Mint فعال میشه
+          mintButton.disabled = false;
         } catch (err) {
           console.error(err);
           alert("خطا در اتصال: " + err.message);
@@ -61,8 +63,5 @@
       connectButton.addEventListener('click', connectWallet);
       mintButton.addEventListener('click', mintNFT);
     </script>
-
-    <!-- بارگذاری کتابخانه ethers.js برای ارتباط با کانترکت -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
   </body>
 </html>
