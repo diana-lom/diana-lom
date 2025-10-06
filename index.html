@@ -1,23 +1,46 @@
-<!doctype html>
-<html lang="fa">
-<head>
-  <meta charset="utf-8" />
-  <title>Mint NFT — Hodor (Base)</title>
-  <style>
-    body { font-family: sans-serif; direction: rtl; padding: 30px; max-width: 600px; margin: auto; background:#fafafa; }
-    button { padding: 10px 18px; margin: 8px 0; cursor: pointer; border:none; border-radius:6px; background:#007bff; color:white; }
-    button:disabled { background:#ccc; cursor:not-allowed; }
-    #log { border: 1px solid #ccc; padding: 10px; margin-top: 15px; height: 220px; overflow-y: auto; background: #fff; font-size:14px; }
-    h2 { color:#007bff; }
-  </style>
-</head>
-<body>
-  <h2>🎨 Hodor NFT — Mint on Base</h2>
-  <p>با زدن دکمه زیر می‌تونی NFT خودت رو از قرارداد Hodor مینت کنی.</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Connect MetaMask - Base Network</title>
+  </head>
+  <body>
+    <h2>اتصال به متامسک (شبکه Base)</h2>
+    <button id="connectButton">اتصال به متامسک</button>
 
-  <button id="connect">🔗 اتصال به متامسک</button>
-  <button id="mint" disabled>✨ مینت NFT</button>
+    <script>
+      const connectButton = document.getElementById('connectButton');
 
-  <div id="log"></div>
+      async function connectWallet() {
+        if (typeof window.ethereum === 'undefined') {
+          alert("MetaMask نصب نشده است!");
+          return;
+        }
 
-  <script src="https://cd
+        try {
+          // درخواست اتصال به حساب
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const account = accounts[0];
+          alert("اتصال موفق! آدرس شما:\n" + account);
+
+          // بررسی شبکه Base
+          const baseChainId = '0x2105'; // Chain ID برای Base Mainnet
+          const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+          if (currentChainId !== baseChainId) {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: baseChainId }],
+            });
+            alert("به شبکه Base متصل شدی ✅");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("خطا در اتصال: " + err.message);
+        }
+      }
+
+      connectButton.addEventListener('click', connectWallet);
+    </script>
+  </body>
+</html>
